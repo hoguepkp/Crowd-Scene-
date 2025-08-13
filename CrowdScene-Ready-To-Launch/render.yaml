@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: crowdscene-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm run start
+    envVars:
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false
+      - key: DECAY_HOURS
+        value: "2"
+      - key: DB_PATH
+        value: "./crowdscene.db"
