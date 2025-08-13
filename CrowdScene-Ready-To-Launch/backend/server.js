@@ -8,7 +8,10 @@ import { RateLimiterMemory } from 'rate-limiter-flexible';
 import fetch from 'node-fetch';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: '*' } });
@@ -16,7 +19,12 @@ const io = new SocketIOServer(server, { cors: { origin: '*' } });
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
-
+// Serve the web client from ../web
+const webDir = path.join(__dirname, '../web');
+app.use(express.static(webDir));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(webDir, 'index.html'));
+});
 // --- Config & DB ---
 const DB_PATH = process.env.DB_PATH || './crowdscene.db';
 const DECAY_HOURS = Number(process.env.DECAY_HOURS || 2);
